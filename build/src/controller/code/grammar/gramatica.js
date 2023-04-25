@@ -75,8 +75,8 @@ var gramatica = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,6],$V1=[1,7],$V2=[1,9],$V3=[1,10],$V4=[1,11],$V5=[1,12],$V6=[1,13],$V7=[2,5,10,24,25,26,27,28],$V8=[1,22],$V9=[1,23],$Va=[1,24],$Vb=[1,25],$Vc=[1,26],$Vd=[1,27],$Ve=[9,13];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"Init":3,"Instrucciones":4,"EOF":5,"Instruccion":6,"Print":7,"Declaration":8,"PUNTOCOMA":9,"PRINT":10,"PARIZQ":11,"Expression":12,"PARDER":13,"Primitivo":14,"Accvar":15,"INT":16,"DOUBLE":17,"BOOL":18,"CHAR":19,"CADENA":20,"Tipo":21,"IDENTIFICADOR":22,"IGUAL":23,"RES_INT":24,"RES_DOUBLE":25,"RES_BOOL":26,"RES_CHAR":27,"RES_STRING":28,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",9:"PUNTOCOMA",10:"PRINT",11:"PARIZQ",13:"PARDER",16:"INT",17:"DOUBLE",18:"BOOL",19:"CHAR",20:"CADENA",22:"IDENTIFICADOR",23:"IGUAL",24:"RES_INT",25:"RES_DOUBLE",26:"RES_BOOL",27:"RES_CHAR",28:"RES_STRING"},
+symbols_: {"error":2,"Init":3,"Instrucciones":4,"EOF":5,"Instruccion":6,"Print":7,"Declaration":8,"PUNTOCOMA":9,"PRINT":10,"PARIZQ":11,"Expression":12,"PARDER":13,"Primitivo":14,"Accvar":15,"INT":16,"DOUBLE":17,"BOOL":18,"CHAR":19,"CADENA":20,"Tipo":21,"IDENTIFICADOR":22,"IGUAL":23,"RES_INT":24,"RES_DOUBLE":25,"RES_BOOL":26,"RES_CHAR":27,"RES_CADENA":28,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",9:"PUNTOCOMA",10:"PRINT",11:"PARIZQ",13:"PARDER",16:"INT",17:"DOUBLE",18:"BOOL",19:"CHAR",20:"CADENA",22:"IDENTIFICADOR",23:"IGUAL",24:"RES_INT",25:"RES_DOUBLE",26:"RES_BOOL",27:"RES_CHAR",28:"RES_CADENA"},
 productions_: [0,[3,2],[4,2],[4,1],[6,1],[6,1],[6,2],[7,5],[12,1],[12,1],[14,1],[14,1],[14,1],[14,1],[14,1],[8,3],[8,5],[21,1],[21,1],[21,1],[21,1],[21,1],[15,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
@@ -843,9 +843,9 @@ case 57:
 break;
 case 58:
 break;
-case 59:return 17;
+case 59:return 16;
 break;
-case 60:return 16;
+case 60:return 17;
 break;
 case 61:return 18;
 break;
@@ -861,7 +861,7 @@ case 66: console.error('Este es un error léxico: ' + yy_.yytext + ', en la line
 break;
 }
 },
-rules: [/^(?:main\b)/i,/^(?:void\b)/i,/^(?:Print\b)/i,/^(?:toLower\b)/i,/^(?:toUpper\b)/i,/^(?:Lenght\b)/i,/^(?:Truncate\b)/i,/^(?:Round\b)/i,/^(?:Typeof\b)/i,/^(?:toString\b)/i,/^(?:toCharArray\b)/i,/^(?:if\b)/i,/^(?:else\b)/i,/^(?:switch\b)/i,/^(?:case\b)/i,/^(?:default\b)/i,/^(?:while\b)/i,/^(?:for\b)/i,/^(?:do\b)/i,/^(?:break\b)/i,/^(?:continue\b)/i,/^(?:return\b)/i,/^(?:new\b)/i,/^(?:add\b)/i,/^(?:\?)/i,/^(?::)/i,/^(?:;)/i,/^(?:\()/i,/^(?:\))/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\[)/i,/^(?:\])/i,/^(?:\.)/i,/^(?:int\b)/i,/^(?:double\b)/i,/^(?:boolean\b)/i,/^(?:char\b)/i,/^(?:string\b)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:\^)/i,/^(?:%)/i,/^(?:=)/i,/^(?:==)/i,/^(?:!=)/i,/^(?:<)/i,/^(?:<=)/i,/^(?:>)/i,/^(?:>=)/i,/^(?:(\|\|))/i,/^(?:&&)/i,/^(?:!)/i,/^(?:[ \r\t]+)/i,/^(?:\n)/i,/^(?:(\/\/).*)/i,/^(?:[\/][*][^*]*[*]+([^\/*][^*]*[*]+)*[\/])/i,/^(?:[0-9]+(\.[0-9]+)\b)/i,/^(?:[0-9]+)/i,/^(?:true|false\b)/i,/^(?:('[^']'))/i,/^(?:("([^\"]|\\")*"))/i,/^(?:[a-zA-Z_][a-zA-Z0-9_]*)/i,/^(?:$)/i,/^(?:.)/i],
+rules: [/^(?:main\b)/i,/^(?:void\b)/i,/^(?:Print\b)/i,/^(?:toLower\b)/i,/^(?:toUpper\b)/i,/^(?:Lenght\b)/i,/^(?:Truncate\b)/i,/^(?:Round\b)/i,/^(?:Typeof\b)/i,/^(?:toString\b)/i,/^(?:toCharArray\b)/i,/^(?:if\b)/i,/^(?:else\b)/i,/^(?:switch\b)/i,/^(?:case\b)/i,/^(?:default\b)/i,/^(?:while\b)/i,/^(?:for\b)/i,/^(?:do\b)/i,/^(?:break\b)/i,/^(?:continue\b)/i,/^(?:return\b)/i,/^(?:new\b)/i,/^(?:add\b)/i,/^(?:\?)/i,/^(?::)/i,/^(?:;)/i,/^(?:\()/i,/^(?:\))/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\[)/i,/^(?:\])/i,/^(?:\.)/i,/^(?:int\b)/i,/^(?:double\b)/i,/^(?:boolean\b)/i,/^(?:char\b)/i,/^(?:string\b)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:\^)/i,/^(?:%)/i,/^(?:=)/i,/^(?:==)/i,/^(?:!=)/i,/^(?:<)/i,/^(?:<=)/i,/^(?:>)/i,/^(?:>=)/i,/^(?:(\|\|))/i,/^(?:&&)/i,/^(?:!)/i,/^(?:[ \r\t]+)/i,/^(?:\n)/i,/^(?:(\/\/).*)/i,/^(?:[\/][*][^*]*[*]+([^\/*][^*]*[*]+)*[\/])/i,/^(?:[0-9]+)/i,/^(?:[0-9]+(\.[0-9]+))/i,/^(?:true|false\b)/i,/^(?:('[^']'))/i,/^(?:("([^\"]|\\")*"))/i,/^(?:[a-zA-Z_][a-zA-Z0-9_]*)/i,/^(?:$)/i,/^(?:.)/i],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66],"inclusive":true}}
 });
 return lexer;

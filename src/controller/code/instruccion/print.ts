@@ -1,5 +1,6 @@
 import { Instruccion } from "../abstract/instruccion";
 import { Expression } from "../abstract/expression";
+import { Environment } from "../abstract/environment";
 
 export class Print extends Instruccion{
     constructor(
@@ -10,8 +11,8 @@ export class Print extends Instruccion{
         super(line, column)
     }
 
-    public execute() {
-        const value = this.expression.execute();
-        console.log("entramos a print");
+    public execute(env: Environment) {
+        const value = this.expression.execute(env);
+        console.log(value.value);
     }
 }   

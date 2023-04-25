@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.get('/ping', InterController.pong);
 
+router.post('/interpreter', InterController.interpretar )
+
 export default router;

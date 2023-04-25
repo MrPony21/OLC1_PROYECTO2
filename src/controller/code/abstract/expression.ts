@@ -1,3 +1,5 @@
+import { Return } from "./Tipo_primitivo";
+import { Environment } from "./environment";
 
 export abstract class Expression{
     public line: number;
@@ -7,6 +9,6 @@ export abstract class Expression{
         this.column = column
     }
 
-    public abstract execute(): Object;
+    public abstract execute(env: Environment): Return;
 
 }

@@ -69,7 +69,8 @@
 
 
 //Operadores racionales
-"=="        return "IGUAL";
+"="         return "IGUAL";
+"=="        return "IGUALAR";
 "!="        return "NOIGUAL";
 "<"         return "MENOR";
 "<="        return "MENORIGUAL";
@@ -100,8 +101,8 @@ ESC = "\\n"|"\\\""|"\\\'"
 
 
 //tipos de datos
+[0-9]+("."[0-9]+)\b return 'DOUBLE';
 [0-9]+     return 'INT';
-[0-9]+(\.[0-9]+) return 'DOUBLE';
 "true"|"false"   return 'BOOL';
 (\'[^']\')       return 'CHAR';
 (\"([^\"]|"\\\"")*\")  return 'CADENA';
@@ -115,6 +116,10 @@ ESC = "\\n"|"\\\""|"\\\'"
 /lex
 
 %{
+    const{Print} = require('../instruccion/Print');
+    const{Primitivo} = require('../expression/Primitivo');
+    const{Type} = require('../abstract/Tipo_primitivo');
+    const{Declaration} = require('../instruccion/Declaration')
 
 %}
 
@@ -138,50 +143,66 @@ ESC = "\\n"|"\\\""|"\\\'"
 %%
 
 Init
-    : instrucciones EOF
+    : Instrucciones EOF {return $1;}
 ;
 
 
 Instrucciones
-    : instrucciones instruccion
-    | instruccion
+    : Instrucciones Instruccion { $1.push($2); $$ = $1 }
+    | Instruccion               { $$ = [$1];}
 ;
 
 Instruccion
-    : defprint
+    : Print { $$ = $1;}
+    | Declaration { $$ = $1 }
     | error PUNTOCOMA 
     { console.error('Este es un error sintactico: ' +yytext + ', en la linea: '+ this._$.first_line+ ', en la columna: '+ this._$.first_column);}
 ;
 
 
-Defprint
-    : PRINT PARIZQ expression PARDER PUNTOCOMA { console.log($3);}
+Print
+    : PRINT PARIZQ Expression PARDER PUNTOCOMA { $$ = new Print(@1.first_line, @1.first_column, $3);}
 ;
 
 
 Expression
-    : primitivo 
-    | accvar
-    | aritmetica
+    : Primitivo     { $$ = $1;}
+    | Accvar        { $$ = $1;}
+    //| aritmetica    { $$ = $1;}
 ;
 
 Primitivo
-    : INT
-    | DOUBLE
-    | BOOL
-    | CHAR
-    | CADENA
+    : INT       { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.INT);}
+    | DOUBLE    { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.DOUBLE); console.log("se ingreso un double");}
+    | BOOL      { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.BOOLEAN);}
+    | CHAR      { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.CHAR);}
+    | CADENA    { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.STRING);}
+;
+
+Declaration
+    : Tipo IDENTIFICADOR PUNTOCOMA                  { $$ = new Declaration($2, $1, null, @1.first_line,@1.first_column)}
+    | Tipo IDENTIFICADOR IGUAL Expression PUNTOCOMA { $$ = new Declaration($2, $1, $4, @1.first_line,@1.first_column)}
+;
+
+
+Tipo
+    : RES_INT       { $$ = Type.INT }
+    | RES_DOUBLE    { $$ = Type.DOUBLE}
+    | RES_BOOL      { $$ = Type.BOOLEAN}
+    | RES_CHAR      { $$ = Type.CHAR}
+    | RES_STRING    { $$ = Type.STRING} 
 ;
 
 Accvar
-    : IDENTIFICADOR
+    : IDENTIFICADOR { $$ = $1;}
 ;
 
+/*
 Aritmetica
-    : expression MAS expression
+    : expression MAS expression 
     | expression MENOS expression
     | expression POR expression
     | expression DIVISION expression
     | expression POTENCIA expression
     | expression MODULO expression
-;
+;*/
