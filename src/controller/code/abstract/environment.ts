@@ -1,13 +1,16 @@
 import { Simbolo } from "./simbolo";
 import { Type } from "./Tipo_primitivo";
+import { outs } from "../salidas/out";
 
 
 export class Environment{
 
     private variables = new Map<string, Simbolo>();
+    private anterior;
 
-    constructor(private anterior: Environment | null){
-        this.variables = new Map<string, Simbolo>();
+    constructor(anterior: Environment | null){
+      this.anterior = anterior
+      this.variables = new Map<string, Simbolo>();
 
     }
 
@@ -23,9 +26,28 @@ export class Environment{
           // guardar la variable en una tabla de simbolos para el reporte
           env.variables.set(id.toLowerCase(), new Simbolo(valor, id, tipo));
         }else {
-          //printlist.push("Error, La variable "+id+" ya existe en el entorno, linea "+linea+" y columna "+columna);
+          outs.push("Error: la variable "+id+ "ya existe en el entorno, en linea: "+linea+" y columna: "+columna);
         }
     
+      }
+
+
+      public getVariable(id: string): Simbolo | null{
+
+        let env: Environment | null = this;
+
+        //Buscaos la variable
+        while (env != null){
+
+          if (env.variables.has(id.toLowerCase())){
+              return env.variables.get(id.toLocaleLowerCase())!;
+          } 
+
+          env = env.anterior;
+
+        }
+
+        return null;
       }
   
 

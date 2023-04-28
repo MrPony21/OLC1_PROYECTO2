@@ -1,1 +1,1 @@
-
+export let outs:Array<String> = [];

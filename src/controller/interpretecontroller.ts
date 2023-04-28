@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Environment } from "./code/abstract/environment";
+import { outs } from "./code/salidas/out";
 
 class interpreteController {
 
@@ -16,13 +17,15 @@ class interpreteController {
 
         try{
             const ast = parser.parse(code);
+
+            outs.splice(0, outs.length);
             const Entorno_global = new Environment(null);
             
             for(const inst of ast){
                 inst.execute(Entorno_global);
             }
 
-            res.json({consola:"ejecutado con exito", errores: null})
+            res.json({consola: outs.join("\n"), errores: null})
 
         } catch (err) {
             console.log(err);

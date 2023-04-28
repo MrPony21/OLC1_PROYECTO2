@@ -6,6 +6,14 @@
 
 %%
 
+[ \r\t]+    {}
+\n          {}
+
+/* COMENTARIOS */
+[/][/].*                               {/* IGNORE */}
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]    {/* IGNORE */}
+
+
 //reservadas principales
 "main"          return "MAIN";
 "void"          return "VOID";
@@ -88,16 +96,11 @@
 
 //------------------------expressionES REGULARES--------------------------------
 
-[ \r\t]+    {}
-\n          {}
-
 /*
 //ESCAPADOS
 ESC = "\\n"|"\\\""|"\\\'"
 */
-//Comentarios
-(\/\/).*    {};
-[\/][*][^*]*[*]+([^\/*][^*]*[*]+)*[\/]  {};
+
 
 
 //tipos de datos
@@ -113,13 +116,17 @@ ESC = "\\n"|"\\\""|"\\\'"
 
 .                       { console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column);}
 
+
+
 /lex
 
 %{
     const{Print} = require('../instruccion/Print');
     const{Primitivo} = require('../expression/Primitivo');
     const{Type} = require('../abstract/Tipo_primitivo');
-    const{Declaration} = require('../instruccion/Declaration')
+    const{Declaration} = require('../instruccion/Declaration');
+    const{Access} = require('../expression/Access');
+    const{Operacion_aritmetica} = require('../expression/operacion_aritmetica')
 
 %}
 
@@ -132,7 +139,7 @@ ESC = "\\n"|"\\\""|"\\\'"
 %left 'MAS' 'MENOS'
 %left 'POR' 'DIVISION' 'MODULO'
 %left 'NOT'
-%left 'UMENOS'
+%right 'UMENOS'
 %left 'PUNTO', 'CORIZQ', 'CORDER'
 %left 'KLENNE' 'DOSPUNTOS'
 
@@ -168,7 +175,7 @@ Print
 Expression
     : Primitivo     { $$ = $1;}
     | Accvar        { $$ = $1;}
-    //| aritmetica    { $$ = $1;}
+    | Aritmetica    { $$ = $1;}
 ;
 
 Primitivo
@@ -194,15 +201,22 @@ Tipo
 ;
 
 Accvar
-    : IDENTIFICADOR { $$ = $1;}
+    : IDENTIFICADOR { $$ = new Access($1, @1.first_line,@1.first_column);}
 ;
 
-/*
+
 Aritmetica
-    : expression MAS expression 
-    | expression MENOS expression
-    | expression POR expression
-    | expression DIVISION expression
-    | expression POTENCIA expression
-    | expression MODULO expression
-;*/
+    : Expression MAS Expression        { $$ = new Operacion_aritmetica($1,"+",$3, @1.first_line,@1.first_column); }
+    | Expression MENOS Expression      { $$ = new Operacion_aritmetica($1,"-",$3, @1.first_line,@1.first_column); }
+    | Expression POR Expression        { $$ = new Operacion_aritmetica($1,"*",$3, @1.first_line,@1.first_column); }
+    | Expression DIVISION Expression   { $$ = new Operacion_aritmetica($1,"/",$3, @1.first_line,@1.first_column); }
+    | Expression POTENCIA Expression   { $$ = new Operacion_aritmetica($1,"^",$3, @1.first_line,@1.first_column); }
+    | Expression MODULO Expression     { $$ = new Operacion_aritmetica($1,"%",$3, @1.first_line,@1.first_column); }
+    | MENOS Expression %prec UMENOS    { $$ = new Operacion_aritmetica($2,'umenos', $2 ,@1.first_line,@1.first_column); console.log("Se registro unmenos") }
+    | PARIZQ Expression PARDER         { $$ = $2}
+;
+
+/*  aun falta asignacion
+Asignacion
+    : id IGUAL Expression PUNTOCOMA {}
+*/

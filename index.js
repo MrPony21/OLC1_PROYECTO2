@@ -3,13 +3,14 @@ const API_URL = "http://127.0.0.1:3000"
 
 const xhr =  new XMLHttpRequest();
 
+/*
 function onrequest(){
     if(this.readyState == 4 && this.status == 200){
 
-        console.log(this.response);
+        console.log("esto",this.response);
     }
 }
-
+*/
 var json;
 
 
@@ -27,12 +28,28 @@ function Ejecutar(){
 
     console.log(jsoncode);
 
+    xhr.addEventListener('load', function() {
+    if (xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        console.log(response.consola);
+
+        let areatext2 = document.getElementById('textarea2');
+        areatext2.value = response.consola;
+        // Aquí puedes manejar la respuesta del servidor
+    } else {
+        console.error('Error:', xhr.statusText);
+    }
+    });
+
+    xhr.addEventListener('error', function() {
+    console.error('Error:', xhr.statusText);
+    });
+
     
-    xhr.addEventListener('interpretar', onrequest);
     xhr.open("POST", `${API_URL}/interprete/interpreter`);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(jsoncode);
-    
+     
     
 }
 

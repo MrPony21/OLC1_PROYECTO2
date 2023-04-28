@@ -26,6 +26,7 @@ export class Primitivo extends Expression{
             case Type.CHAR:
                 return { value: this.value, type: Type.CHAR};
             case Type.STRING:
+                this.value = this.value.replace(new RegExp('"', "g"), "");
                 return {value: this.value, type: Type.STRING};
             default:
                 return { value: null, type: Type.NULL };
