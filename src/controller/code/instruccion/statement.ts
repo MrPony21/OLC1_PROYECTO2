@@ -14,7 +14,12 @@ export class Statement extends Instruccion{
         for(const instrucciones of this.body){
            
             try{
-                instrucciones.execute(newEntorno);
+                const ret = instrucciones.execute(newEntorno);
+
+                if(ret != null && ret != undefined){
+                    return ret;
+                }
+
             }catch(e){
                 console.log("Error al ejecutar instrucciones");
             }

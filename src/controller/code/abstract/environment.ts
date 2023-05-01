@@ -28,7 +28,7 @@ export class Environment{
           // guardar la variable en una tabla de simbolos para el reporte
           env.variables.set(id.toLowerCase(), new Simbolo(valor, id, tipo));
         }else {
-          outs.push("Error: la variable "+id+ "ya existe en el entorno, en linea: "+linea+" y columna: "+columna);
+          //outs.push("Error: la variable "+id+ "ya existe en el entorno, en linea: "+linea+" y columna: "+columna);
         }
     
       }
@@ -143,7 +143,7 @@ export class Environment{
         let env: Environment | null = this;
 
         while(env.anterior != null){
-          env = env?.anterior;
+          env = env.anterior;
         }
 
         return env;

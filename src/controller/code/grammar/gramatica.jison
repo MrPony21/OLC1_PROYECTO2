@@ -39,7 +39,7 @@
 "do"        return "DO";
 "break"     return "BREAK"
 "continue"  return "CONTINUE";
-"return"    return "return";
+"return"    return "RETURN";
 
 //palabras reservadas estructuras de datos
 "new"       return "NEW";
@@ -136,11 +136,16 @@ ESC = "\\n"|"\\\""|"\\\'"
     const{Parametro} = require('../expression/parametro.ts');
     const{CallFuncion} = require('../expression/callFuncion.ts');
     const{Operacion_relacional} = require('../expression/operacion_relacional.ts');
-    const{Operacion_unaria} = require('../expression/operacion_unaria.ts')
+    const{Operacion_unaria} = require('../expression/operacion_unaria.ts');
+    const{For} = require('../instruccion/for.ts');
+    const{If} = require('../instruccion/if.ts');
+    const{Operacion_logica} = require('../expression/operacion_logica.ts');
+    const{While} = require('../instruccion/while.ts');
 
 %}
 
 //PRECEDENCIAS
+
 %left 'OR'
 %left 'AND'
 %left 'NOT'
@@ -152,6 +157,23 @@ ESC = "\\n"|"\\\""|"\\\'"
 %right 'UMENOS'
 %left 'PUNTO', 'CORIZQ', 'CORDER'
 %left 'KLENNE' 'DOSPUNTOS'
+
+
+/*
+//otras precedencias
+//Logicas
+%left 'INCREMENTO' 'DECREMENTO'
+%left 'POTENCIA'
+%left 'OR'
+%left 'AND'
+%left 'NOIGUAL, IGUALAR'
+%left 'MAYOR' 'MENOR' 'MAYORIGUAL' 'MENORIGUAL'
+//numeros
+%left 'MAS' 'MENOS'
+%left 'POR' 'DIVISION' 'MODULO'
+%right 'POTENCIA POTENCIA'
+%right negativo 'NOT' 'PARIZQ'
+*/
 
 //COMENZAMOS CON LA GRAMATICA
 
@@ -176,7 +198,10 @@ Instruccion
     | Callfuncion PUNTOCOMA              { $$ = $1; }
     | DeclararFuncion                    { $$ = $1; }
     | Operaciones_unarias PUNTOCOMA      { $$ = $1; }
-    | FOR                                { $$ = $1; }
+    | For                                { $$ = $1; }
+    | cif                                { $$ = $1; }  
+    | While                              { $$ = $1; }   
+    | ReturnExp                          { $$ = $1; }
     | error PUNTOCOMA 
     { console.error('Este es un error sintactico: ' +yytext + ', en la linea: '+ this._$.first_line+ ', en la columna: '+ this._$.first_column);}
 ;
@@ -193,6 +218,7 @@ Expression
     | Aritmetica    { $$ = $1;}
     | Relacionales  { $$ = $1;}
     | Operaciones_unarias { $$ = $1;}
+    | Logicos              { $$ = $1; }
     //CASTEO
 ;
 
@@ -222,11 +248,24 @@ Accvar
     : IDENTIFICADOR { $$ = new Access($1, @1.first_line,@1.first_column);}
 ;
 
-//Sentencias control
+//Sentencias control y ciclicas
 For
-    : FOR PARIZQ Declaration PUNTOCOMA Expression PUNTOCOMA Operaciones_unarias PARDER Statement { $$ = $1; }
+    : FOR PARIZQ Declaration Expression PUNTOCOMA Operaciones_unarias PARDER Statement { $$ = new For($3, $4, $6, $8 ,@1.first_line,@1.first_column); }
 ;
 
+While
+    : WHILE PARIZQ Expression PARDER Statement { $$ = new While($3, $5, @1.first_line,@1.first_column);}
+;
+
+cif
+    : IF PARIZQ Expression PARDER Statement celse { $$ = new If($3, $5, $6, @1.first_line,@1.first_column); }
+;
+
+celse
+    : ELSE Statement { $$ = $2; }
+    | ELSE cif       { $$ = $2; }
+    | { $$ = null; }
+;
 
 Aritmetica
     : Expression MAS Expression        { $$ = new Operacion_aritmetica($1,"+",$3, @1.first_line,@1.first_column); }
@@ -251,6 +290,12 @@ Relacionales
     | Expression MENORIGUAL Expression  { $$ = new Operacion_relacional($1,"<=",$3,  @1.first_line,@1.first_column); }
     | Expression MAYOR Expression       { $$ = new Operacion_relacional($1,">",$3,  @1.first_line,@1.first_column); }
     | Expression MAYORIGUAL Expression  { $$ = new Operacion_relacional($1,">=",$3,  @1.first_line,@1.first_column); }
+;
+
+Logicos
+    : Expression OR Expression          { $$ = new Operacion_logica($1, "OR", $3, @1.first_line,@1.first_column);}
+    | Expression AND Expression         { $$ = new Operacion_logica($1, "AND", $3 , @1.first_line,@1.first_column);}
+    | NOT Expression                    { $$ = new Operacion_logica($2, "NOT", $2 , @1.first_line,@1.first_column)}
 ;
 
 Asignacion
@@ -293,4 +338,9 @@ Callfuncion
 Argumentos
     : Argumentos COMA Expression    { $1.push($3); $$ = $1 } 
     | Expression                    { $$ = [$1];}
+;
+
+ReturnExp
+    : RETURN Expression PUNTOCOMA                     { $$ = new ReturnExpression( $2, @1.first_line,@1.first_column); }
+    | RETURN PUNTOCOMA                                { $$ = new ReturnExpression( null, @1.first_line,@1.first_column); }  
 ;

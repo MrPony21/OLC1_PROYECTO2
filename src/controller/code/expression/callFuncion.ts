@@ -14,7 +14,7 @@ export class CallFuncion extends Expression {
 
         if (funcion!= null){
             //No entiendo esta constante
-            //const envGl = new Environment(env.getGlobal());
+            const envGl = new Environment(env.getGlobal());
 
             if(funcion.parametros.length == this.argumentos.length){
 
@@ -24,14 +24,14 @@ export class CallFuncion extends Expression {
                     const param = funcion.parametros[i].execute(env);
 
                     if (valor.type == param.type){
-                        env.save(param.value, valor.value, valor.type, this.line, this.column);
+                        envGl.save(param.value, valor.value, valor.type, this.line, this.column);
                     } else {
                         console.log("Error: el parametro: "+param.value+ " no es del tipo: "+valor.type );
                     }
 
                 }
                 //Aqui ejecutamos todo lo que esta dentro de la funcion y ademas se crea el nuevo entorno en la clase statement
-                funcion.statement.execute(env);
+                funcion.statement.execute(envGl);
 
             } else {
                 console.log("Error: No existe la funcion: "+this.id+" linea: "+this.line+" column: "+this.column);
