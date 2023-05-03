@@ -5,7 +5,9 @@ export enum Type{
     CHAR = 3,
     STRING = 4,
     NULL = 5,
-    RETURN = 6
+    RETURN = 6,
+    BREAK = 7,
+    CONTINUE
 }
 
 export type Return = {

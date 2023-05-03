@@ -23,4 +23,17 @@ export class Asignacion extends Instruccion{
 
     }
 
+    public arbol(): { rama: string; nodo: string; } {
+        const id = Math.floor(Math.random() * (100-0)+0);
+        //genero el nodoname
+        const NodoPrincipal = `nodoAsignar${id.toString()}`;
+        let rama = `${NodoPrincipal} [label="Asignar"];\n`
+        const codigorama: { rama: string; nodo: string; } = this.valor.arbol();
+        rama += codigorama.rama;
+
+        rama+= `${NodoPrincipal} -> ${codigorama.nodo};\n`
+
+        return{rama: rama, nodo: NodoPrincipal};
+    }
+
 }

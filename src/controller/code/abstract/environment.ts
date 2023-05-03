@@ -9,10 +9,12 @@ export class Environment{
     private variables = new Map<string, Simbolo>();
     private funciones = new Map<string, Funcion>();
     private anterior;
+    public nombre: string;;
 
-    constructor(anterior: Environment | null){
+    constructor(anterior: Environment | null , nombre: string){
       this.anterior = anterior
       this.variables = new Map<string, Simbolo>();
+      this.nombre = nombre;
 
     }
 
@@ -62,12 +64,12 @@ export class Environment{
 
           if(env.variables.has(id.toLowerCase())){
             let variableExistente = env.variables.get(id.toLowerCase())?.type;
-            if(variableExistente == tipo){
+           // if(variableExistente == tipo){
               env.variables.set(id.toLocaleLowerCase(), new Simbolo(valor, id, tipo));
               return
-            }else{
-              console.log("No se puede cambiar el tipo de variable")
-            }
+            //}else{
+              //console.log("No se puede cambiar el tipo de variable")
+            //}
             
           }
 
@@ -99,7 +101,22 @@ export class Environment{
 
         */
       }
-  
+
+      //aqui eliminaremos la variable declarada en un for
+      public deleteVariable(id: string){
+
+        let env: Environment | null = this;
+
+        //Buscaos la variable
+        if(env.variables.has(id.toLowerCase())){
+
+          env.variables.delete(id);
+
+        }
+
+        return null;
+    }
+
 
       //-----------------------------------------------FUNCIONES-----------------------------------------
       public saveFuncion(id: string, funcion: Funcion){
@@ -150,5 +167,10 @@ export class Environment{
 
       }
 
+/*
+      public setnombre(str: string){
+        this.nombre = str;
+
+      }*/
 
 }

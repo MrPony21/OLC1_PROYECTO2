@@ -243,4 +243,81 @@ export class Operacion_aritmetica extends Expression{
 
 
 
+    public arbol(): { rama: string; nodo: string; } {
+
+        //id unico
+        const id = Math.floor(Math.random() * (100-0)+0);
+        //generar el nombre del nodo
+        const nodo = `nodoArit${id.toString()}`;
+        let rama = ''
+        if (this.signo == "+"){ 
+            rama += `${nodo}[label="+"];\n`;
+            const codeop1: { rama: string; nodo: string; } = this.exp1.arbol();
+            const codeop2: { rama: string; nodo: string; } = this.exp2.arbol();
+            rama += codeop1.rama;
+            rama += codeop2.rama;
+
+            rama += `${nodo} -> ${codeop1.nodo};\n`;
+            rama += `${nodo} -> ${codeop2.nodo};\n`;
+        
+        }  else if (this.signo == "-"){ 
+            rama += `${nodo}[label="-"];\n`;
+            const codeop1: { rama: string; nodo: string; } = this.exp1.arbol();
+            const codeop2: { rama: string; nodo: string; } = this.exp2.arbol();
+            rama += codeop1.rama;
+            rama += codeop2.rama;
+
+            rama += `${nodo} -> ${codeop1.nodo};\n`;
+            rama += `${nodo} -> ${codeop2.nodo};\n`;   
+
+        } else if (this.signo == "umenos"){
+            rama += `${nodo}[label="-"];\n`;
+            const codeop1: { rama: string; nodo: string; } = this.exp1.arbol();
+            rama += codeop1.rama;
+
+            rama += `${nodo} -> ${codeop1.nodo};\n`;
+
+        } else if(this.signo == "*"){
+            rama += `${nodo}[label="*"];\n`;
+            const codeop1: { rama: string; nodo: string; } = this.exp1.arbol();
+            const codeop2: { rama: string; nodo: string; } = this.exp2.arbol();
+            rama += codeop1.rama;
+            rama += codeop2.rama;
+
+            rama += `${nodo} -> ${codeop1.nodo};\n`;
+            rama += `${nodo} -> ${codeop2.nodo};\n`;   
+
+        } else if(this.signo == "/"){
+            rama += `${nodo}[label="/"];\n`;
+            const codeop1: { rama: string; nodo: string; } = this.exp1.arbol();
+            const codeop2: { rama: string; nodo: string; } = this.exp2.arbol();
+            rama += codeop1.rama;
+            rama += codeop2.rama;
+
+            rama += `${nodo} -> ${codeop1.nodo};\n`;
+            rama += `${nodo} -> ${codeop2.nodo};\n`;  
+        } else if(this.signo == "^"){
+            rama += `${nodo}[label="^"];\n`;
+            const codeop1: { rama: string; nodo: string; } = this.exp1.arbol();
+            const codeop2: { rama: string; nodo: string; } = this.exp2.arbol();
+            rama += codeop1.rama;
+            rama += codeop2.rama;
+
+            rama += `${nodo} -> ${codeop1.nodo};\n`;
+            rama += `${nodo} -> ${codeop2.nodo};\n`;  
+
+        } else if(this.signo == "%") {
+            rama += `${nodo}[label="%"];\n`;
+            const codeop1: { rama: string; nodo: string; } = this.exp1.arbol();
+            const codeop2: { rama: string; nodo: string; } = this.exp2.arbol();
+            rama += codeop1.rama;
+            rama += codeop2.rama;
+
+            rama += `${nodo} -> ${codeop1.nodo};\n`;
+            rama += `${nodo} -> ${codeop2.nodo};\n`;  
+        }
+
+        return{rama: rama, nodo:nodo};
+    
+    }
 }

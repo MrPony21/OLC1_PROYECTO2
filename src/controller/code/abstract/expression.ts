@@ -11,4 +11,8 @@ export abstract class Expression{
 
     public abstract execute(env: Environment): Return;
 
+    public abstract arbol(): {rama: string, nodo: string};
+
+
+
 }

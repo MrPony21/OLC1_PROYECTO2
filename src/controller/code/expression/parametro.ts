@@ -18,4 +18,18 @@ export class Parametro extends Expression{
         return { value: this.id, type: this.tipo};
     }
 
+
+
+    public arbol(): { rama: string; nodo: string; } {
+
+        //id unico
+        const id = Math.floor(Math.random() * (100-0)+0);
+        //generar el nombre del nodo
+        const nodo = `nodoParametros${id.toString()}`;
+        let rama = `${nodo}[label=${this.id}];\n`;
+
+
+        return{rama: rama, nodo: nodo};
+    }
+
 }

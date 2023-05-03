@@ -36,5 +36,26 @@ export class Primitivo extends Expression{
     }
 
 
+    public arbol(): { rama: string; nodo: string; } {
+        //generar el id unidco 
+         const id = Math.floor(Math.random() * (100-0)+0);
+         //generar el nombre del nodo
+         const nodo = `nodoPrimitivo${id.toString()}`;
+
+         let va = this.value;
+         if(this.tipo == Type.STRING){
+            va = va.replace(new RegExp('"', "g"), "");
+            console.log(va);
+         }
+
+         const ramaP = `${nodo}[label="Primitivo"];\n
+         nodoPrimitivo${nodo}[label="${va.toString()}"];\n
+         ${nodo} -> nodoPrimitivo${nodo};\n`;
+
+
+        return{rama: ramaP, nodo: nodo};
+    }
+
+
 
 }

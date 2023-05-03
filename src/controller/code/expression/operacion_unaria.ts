@@ -56,4 +56,28 @@ export class Operacion_unaria extends Expression{
     }
 
 
+
+
+    public arbol(): { rama: string; nodo: string; } {
+
+        //id unico
+        const id = Math.floor(Math.random() * (100-0)+0);
+        //generar el nombre del nodo
+        const nodo = `nodoUri${id.toString()}`;
+        const nodouna = `nodouna${id.toString()}`;
+        let rama = `${nodo}[label="${this.id.toString()}"];\n`;
+
+        if(this.signo == "++"){
+            rama+= `${nodouna}[label="++"];\n`;
+
+        } else if(this.signo == "--"){
+            rama+= `${nodouna}[label="--"];\n`;
+        }
+
+        rama+= `${nodo} -> ${nodouna}\n`;
+
+        return{rama: rama, nodo: nodo};
+    }
+
+
 }

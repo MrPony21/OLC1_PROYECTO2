@@ -117,7 +117,11 @@ ESC = "\\n"|"\\\""|"\\\'"
 
 <<EOF>>                 return 'EOF';
 
-.                       { console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column);}
+.                       { 
+                            console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column);  
+                            const nuevooble =  { tipo: "Lexico", descripcion: `Caracter: ${yytext} no esperado`, linea:  yylloc.first_line , columna: yylloc.first_column}
+                            Err.push(nuevooble);
+                        }
 
 
 
@@ -141,6 +145,16 @@ ESC = "\\n"|"\\\""|"\\\'"
     const{If} = require('../instruccion/if.ts');
     const{Operacion_logica} = require('../expression/operacion_logica.ts');
     const{While} = require('../instruccion/while.ts');
+    const{ReturnExpression} = require('../expression/return.ts');
+    const{Dowhile} = require('../instruccion/dowhile.ts');
+    const{TOLower} = require('../expression/tolower.ts');
+    const{TOUpper} = require('../expression/toupper.ts');
+    const{Truncate} = require('../expression/truncate.ts');
+    const{Round} = require('../expression/round.ts');
+    const{TypeOf} = require('../expression/typeof.ts');
+    const{ToString} = require('../expression/tostring.ts')
+    const{Err} = require('../salidas/out.ts')
+    
 
 %}
 
@@ -192,7 +206,8 @@ Instrucciones
 ;
 
 Instruccion
-    : Print                              { $$ = $1; }
+    : main                               { $$ = $1; }
+    | Print                              { $$ = $1; }
     | Declaration                        { $$ = $1; }
     | Asignacion                         { $$ = $1; }
     | Callfuncion PUNTOCOMA              { $$ = $1; }
@@ -201,11 +216,20 @@ Instruccion
     | For                                { $$ = $1; }
     | cif                                { $$ = $1; }  
     | While                              { $$ = $1; }   
+    | Dowhile                            { $$ = $1; }  
     | ReturnExp                          { $$ = $1; }
+    | Transfer                           { $$ = $1; }
     | error PUNTOCOMA 
-    { console.error('Este es un error sintactico: ' +yytext + ', en la linea: '+ this._$.first_line+ ', en la columna: '+ this._$.first_column);}
+    { 
+        console.error('Este es un error sintactico: ' +yytext + ', en la linea: '+ this._$.first_line+ ', en la columna: '+ this._$.first_column);  
+        const nuevoobj =  { tipo: "Sintactico", descripcion: `token no esperado:  ${yytext}`, linea:  this._$.first_line , columna: this._$.first_column+1};
+        Err.push(nuevoobj)
+    }
 ;
 
+main
+    : MAIN Callfuncion PUNTOCOMA { $$ = $2; }
+;
 
 Print
     : PRINT PARIZQ Expression PARDER PUNTOCOMA { $$ = new Print(@1.first_line, @1.first_column, $3);}
@@ -219,12 +243,19 @@ Expression
     | Relacionales  { $$ = $1;}
     | Operaciones_unarias { $$ = $1;}
     | Logicos              { $$ = $1; }
+    | Callfuncion              { $$ = $1; }
+    | Tolower                   { $$ = $1;}
+    | Toupper                   { $$ = $1;}
+    | Truncate                  { $$ = $1; }
+    | Round                     { $$ = $1; }
+    | Typeof                    { $$ = $1; }   
+    | Tostring                  { $$ = $1; }   
     //CASTEO
 ;
 
 Primitivo
     : INT       { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.INT);}
-    | DOUBLE    { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.DOUBLE); console.log("se ingreso un double");}
+    | DOUBLE    { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.DOUBLE);}
     | BOOL      { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.BOOLEAN);}
     | CHAR      { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.CHAR);}
     | CADENA    { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.STRING);}
@@ -257,6 +288,10 @@ While
     : WHILE PARIZQ Expression PARDER Statement { $$ = new While($3, $5, @1.first_line,@1.first_column);}
 ;
 
+Dowhile
+    : DO Statement WHILE PARIZQ Expression PARDER PUNTOCOMA{ $$ = new Dowhile($5, $2 , @1.first_line,@1.first_column);}
+;
+
 cif
     : IF PARIZQ Expression PARDER Statement celse { $$ = new If($3, $5, $6, @1.first_line,@1.first_column); }
 ;
@@ -274,7 +309,7 @@ Aritmetica
     | Expression DIVISION Expression   { $$ = new Operacion_aritmetica($1,"/",$3, @1.first_line,@1.first_column); }
     | Expression POTENCIA Expression   { $$ = new Operacion_aritmetica($1,"^",$3, @1.first_line,@1.first_column); }
     | Expression MODULO Expression     { $$ = new Operacion_aritmetica($1,"%",$3, @1.first_line,@1.first_column); }
-    | MENOS Expression %prec UMENOS    { $$ = new Operacion_aritmetica($2,'umenos', $2 ,@1.first_line,@1.first_column); console.log("Se registro unmenos") }
+    | MENOS Expression %prec UMENOS    { $$ = new Operacion_aritmetica($2,'umenos', $2 ,@1.first_line,@1.first_column); }
     | PARIZQ Expression PARDER         { $$ = $2}
 ;
 
@@ -341,6 +376,36 @@ Argumentos
 ;
 
 ReturnExp
-    : RETURN Expression PUNTOCOMA                     { $$ = new ReturnExpression( $2, @1.first_line,@1.first_column); }
-    | RETURN PUNTOCOMA                                { $$ = new ReturnExpression( null, @1.first_line,@1.first_column); }  
+    : RETURN Expression PUNTOCOMA                     { $$ = new ReturnExpression( $2, Type.RETURN , @1.first_line,@1.first_column); }
+    | RETURN PUNTOCOMA                                { $$ = new ReturnExpression( null, Type.RETURN , @1.first_line,@1.first_column); }  
+;
+
+Transfer 
+    : BREAK PUNTOCOMA                                 { $$ = new ReturnExpression( null, Type.BREAK, @1.first_line,@1.first_column);}
+    | CONTINUE PUNTOCOMA                              { $$ = new ReturnExpression( null, Type.CONTINUE,@1.first_line,@1.first_column);}
+;
+
+//funciones nativas
+Tolower
+    : TOLOWER PARIZQ Expression PARDER       { $$ = new TOLower($3, @1.first_line,@1.first_column); }
+;
+
+Toupper
+    : TOUPPER PARIZQ Expression PARDER          { $$ = new TOUpper($3, @1.first_line,@1.first_column); }
+;
+
+Truncate
+    : TRUNCATE PARIZQ Expression PARDER          { $$ = new Truncate($3, @1.first_line,@1.first_column); }
+;
+
+Round   
+    : ROUND PARIZQ Expression PARDER             { $$ = new Round($3, @1.first_line,@1.first_column); }
+;
+
+Typeof
+    : TYPEOF PARIZQ Expression PARDER           { $$ = new TypeOf($3,  @1.first_line,@1.first_column); }
+;
+
+Tostring
+    : TOSTRING PARIZQ Expression PARDER         { $$ = new ToString($3, @1.first_line,@1.first_column); }
 ;

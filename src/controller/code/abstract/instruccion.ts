@@ -10,4 +10,6 @@ export abstract class Instruccion{
 
     public abstract execute(env: Environment): any;
 
+    public abstract arbol(): {rama: string, nodo: string};
+
 }
