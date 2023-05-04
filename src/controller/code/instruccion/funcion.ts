@@ -28,12 +28,28 @@ export class Funcion extends Instruccion{
         //guarde la funcion
         env.saveFuncion(this.id, this);
 
+
+        let tipoTable;
+        if(this.tipo == Type.INT){
+            tipoTable = "Int";
+        }else if (this.tipo == Type.DOUBLE){
+            tipoTable = "Double";
+        }else if(this.tipo == Type.BOOLEAN){
+            tipoTable = "Boolean";
+        }else if (this.tipo == Type.CHAR){
+            tipoTable = "Char";
+        }else if (this.tipo == Type.STRING){
+            tipoTable = "String"
+        } else if (this.tipo == Type.NULL){
+            tipoTable = "Void"
+        }
+
         let elementTable = {};
         if(this.tipo == Type.NULL){
-            elementTable =  { identificador: this.id, tipo_declaracion: "Metodo", tipo_dato: this.tipo ,entorno: env.nombre ,linea:  this.line , columna: this.column+1};
+            elementTable =  { identificador: this.id, tipo_declaracion: "Metodo", tipo_dato: tipoTable ,entorno: env.nombre ,linea:  this.line , columna: this.column+1};
             table.push(elementTable);
         }else{
-            let elementTable =  { identificador: this.id, tipo_declaracion: "Funcion", tipo_dato: this.tipo ,entorno: env.nombre ,linea:  this.line , columna: this.column+1};
+            let elementTable =  { identificador: this.id, tipo_declaracion: "Funcion", tipo_dato: tipoTable ,entorno: env.nombre ,linea:  this.line , columna: this.column+1};
             table.push(elementTable);
         }
 

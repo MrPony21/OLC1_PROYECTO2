@@ -28,9 +28,25 @@ export class Declaration extends Instruccion{
             env.save(this.id, null, this.tipo, this.line, this.column);
         }
 
-        const elementTable =  { identificador: this.id, tipo_declaracion: "Variable", tipo_dato: this.tipo , entorno: env.nombre ,linea:  this.line , columna: this.column+1};
-        table.push(elementTable)
+        let tipoTable;
+        if(this.tipo == Type.INT){
+            tipoTable = "Int";
+        }else if (this.tipo == Type.DOUBLE){
+            tipoTable = "Double";
+        }else if(this.tipo == Type.BOOLEAN){
+            tipoTable = "Boolean";
+        }else if (this.tipo == Type.CHAR){
+            tipoTable = "Char";
+        }else if (this.tipo == Type.STRING){
+            tipoTable = "String"
+        } else{
+            tipoTable = "Null"
+        }
         
+        const elementTable =  { identificador: this.id, tipo_declaracion: "Variable", tipo_dato: tipoTable , entorno: env.nombre ,linea:  this.line , columna: this.column+1};
+        if (!table.some((obj: any) => JSON.stringify(obj) === JSON.stringify(elementTable))) {
+            table.push(elementTable);
+        }
     }
 
     public getid(){

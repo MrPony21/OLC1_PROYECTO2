@@ -66,6 +66,8 @@ function Ejecutar(){
 }
 
 
+
+
 function abrirArchivo(event) {
     event.preventDefault();
 
@@ -98,6 +100,35 @@ function abrirArchivo(event) {
 
 
 }   
+
+
+function guardar(){
+    // Obtener el elemento del input de archivo
+    var inputFile = document.getElementById('inputFile');
+
+    // Obtener el archivo seleccionado por el usuario
+    var file = inputFile.files[0];
+
+    // Crear un objeto FileReader
+    var reader = new FileReader();
+
+    // Escuchar el evento 'load' del lector
+    reader.onload = function(event) {
+        // Obtener el contenido del archivo
+        var contenido = document.getElementById('textarea1').value;
+
+        // Crear un objeto Blob
+        var blob = new Blob([contenido], {type: file.type});
+
+        // Guardar el archivo utilizando FileSaver.js
+        saveAs(blob, file.name);
+};
+
+// Leer el archivo seleccionado
+reader.readAsBinaryString(file);
+
+
+}
 
 function ErroresTabla(errores){
 

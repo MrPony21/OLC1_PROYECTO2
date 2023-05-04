@@ -20,7 +20,7 @@
 "Print"         return "PRINT";
 "toLower"       return "TOLOWER";
 "toUpper"       return "TOUPPER";
-"Lenght"        return "LENGHT";
+"Length"        return "LENGTH";
 "Truncate"      return "TRUNCATE";
 "Round"         return "ROUND";
 "Typeof"        return 'TYPEOF';
@@ -152,14 +152,21 @@ ESC = "\\n"|"\\\""|"\\\'"
     const{Truncate} = require('../expression/truncate.ts');
     const{Round} = require('../expression/round.ts');
     const{TypeOf} = require('../expression/typeof.ts');
-    const{ToString} = require('../expression/tostring.ts')
-    const{Err} = require('../salidas/out.ts')
+    const{ToString} = require('../expression/tostring.ts');
+    const{Err} = require('../salidas/out.ts');
+    const{Casteo} = require('../expression/casteo.ts');
+    const{Ternario} = require('../expression/ternario.ts');
+    const{Vector} = require('../instruccion/vector.ts');
+    const{AccessVector} = require('../expression/accessVector.ts');
+    const{AsignacionVector} = require('../instruccion/asignacionVector.ts');
+    const{Lenght} = require('../expression/lenght.ts');
     
 
 %}
 
 //PRECEDENCIAS
 
+%left 'CASTEO'
 %left 'OR'
 %left 'AND'
 %left 'NOT'
@@ -210,9 +217,11 @@ Instruccion
     | Print                              { $$ = $1; }
     | Declaration                        { $$ = $1; }
     | Asignacion                         { $$ = $1; }
+    | AsignacionVector                   { $$ = $1; }
     | Callfuncion PUNTOCOMA              { $$ = $1; }
     | DeclararFuncion                    { $$ = $1; }
     | Operaciones_unarias PUNTOCOMA      { $$ = $1; }
+    | Declararvector                     { $$ = $1; }
     | For                                { $$ = $1; }
     | cif                                { $$ = $1; }  
     | While                              { $$ = $1; }   
@@ -239,19 +248,27 @@ Print
 Expression
     : Primitivo     { $$ = $1;}
     | Accvar        { $$ = $1;}
+    | Accvector     { $$ = $1;}
     | Aritmetica    { $$ = $1;}
     | Relacionales  { $$ = $1;}
     | Operaciones_unarias { $$ = $1;}
     | Logicos              { $$ = $1; }
     | Callfuncion              { $$ = $1; }
+    | Ternario                  { $$ = $1; }
     | Tolower                   { $$ = $1;}
     | Toupper                   { $$ = $1;}
     | Truncate                  { $$ = $1; }
     | Round                     { $$ = $1; }
     | Typeof                    { $$ = $1; }   
     | Tostring                  { $$ = $1; }   
-    //CASTEO
+    | Lenght                    { $$ = $1; }
+    //| casteo  %prec CASTEO                    { $$ = $1; }
 ;
+
+/*
+casteo
+    : PARIZQ Tipo PARDER Expression             { $$ = new Casteo($2, $4 , @1.first_line,@1.first_column);}
+;*/
 
 Primitivo
     : INT       { $$ = new Primitivo(@1.first_line,@1.first_column,$1, Type.INT);}
@@ -279,6 +296,10 @@ Accvar
     : IDENTIFICADOR { $$ = new Access($1, @1.first_line,@1.first_column);}
 ;
 
+Accvector
+    : IDENTIFICADOR CORIZQ Expression CORDER { $$ = new AccessVector($1, $3, @1.first_line,@1.first_column);}
+;
+
 //Sentencias control y ciclicas
 For
     : FOR PARIZQ Declaration Expression PUNTOCOMA Operaciones_unarias PARDER Statement { $$ = new For($3, $4, $6, $8 ,@1.first_line,@1.first_column); }
@@ -300,6 +321,10 @@ celse
     : ELSE Statement { $$ = $2; }
     | ELSE cif       { $$ = $2; }
     | { $$ = null; }
+;
+
+Ternario
+    : Expression KLENNE Expression DOSPUNTOS Expression  { $$ = new Ternario($1, $3, $5,  @1.first_line,@1.first_column); }
 ;
 
 Aritmetica
@@ -337,6 +362,9 @@ Asignacion
     : IDENTIFICADOR IGUAL Expression PUNTOCOMA { $$ = new Asignacion($1, $3, @1.first_line,@1.first_column); }
 ;
 
+AsignacionVector
+    : IDENTIFICADOR CORIZQ Expression CORDER IGUAL Expression PUNTOCOMA { $$ = new AsignacionVector($1, $3, $6, @1.first_line,@1.first_column);}
+;
 
 DeclararFuncion
     : Tipo IDENTIFICADOR PARIZQ Parametros PARDER Statement { $$ = new Funcion($1,$2,$4,$6, @1.first_line,@1.first_column);}
@@ -409,3 +437,12 @@ Typeof
 Tostring
     : TOSTRING PARIZQ Expression PARDER         { $$ = new ToString($3, @1.first_line,@1.first_column); }
 ;
+
+Lenght 
+    : LENGTH PARIZQ Expression PARDER           { $$ = new Lenght($3,  @1.first_line,@1.first_column)}
+;
+
+Declararvector
+    : Tipo CORIZQ CORDER IDENTIFICADOR IGUAL NEW Tipo CORIZQ Expression CORDER PUNTOCOMA { $$ = new Vector($4, $1, [], @1.first_line,@1.first_column);}
+    | Tipo CORIZQ CORDER IDENTIFICADOR IGUAL LLAVEIZQ Argumentos LLAVEDER PUNTOCOMA      { $$ = new Vector($4, $1, $7, @1.first_line,@1.first_column);}
+ ;
